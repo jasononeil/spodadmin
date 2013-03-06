@@ -103,7 +103,9 @@ class Admin {
 			var s = Type.getSuperClass(v);
 			while( s != null ) {
 				if( s == Object ) {
-					tables.push(new TableInfos(Type.getClassName(v)));
+					var m = haxe.rtti.Meta.getType(v);
+					if ( Reflect.hasField(m, "noTable") == false )
+						tables.push(new TableInfos(Type.getClassName(v)));
 					break;
 				}
 				s = Type.getSuperClass(s);
