@@ -89,17 +89,30 @@ class Admin {
 		return false;
 	}
 
+	/** 
+	* Populate an array with TableInfos based on the classes provided.
+	*
+	* @param tables the Array to push TableInfos to
+	* @param classes the classes to process, should be the result of neko.Lib.getClasses()
+	* @return Void.  It just adds to the provided tables array instead of returning a new array.
+	*/
 	function crawl(tables : Array<TableInfos>,classes : Dynamic) {
 		for( cname in Reflect.fields(classes) ) {
 
 			var v : Dynamic = Reflect.field(classes,cname);
+
+			// Recurse into packages
 			var c = cname.charAt(0);
 			if( c >= "a" && c <= "z" ) {
 				crawl(tables,v);
 				continue;
 			}
+
+			// Skip if no RTTI
 			if( haxe.rtti.Meta.getType(v).rtti == null )
 				continue;
+
+			// If it is a subclass of sys.db.Object, add to the tables array
 			var s = Type.getSuperClass(v);
 			while( s != null ) {
 				if( s == Object ) {
